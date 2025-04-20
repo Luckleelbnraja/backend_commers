@@ -2,7 +2,6 @@ package com.example.e_commer.booking.service;
 
 import com.example.e_commer.booking.entity.Product;
 import com.example.e_commer.booking.repository.ProductRepository;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,27 +15,38 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Object create(Product product){
+    public Product create(Product product) {
         return productRepository.save(product);
     }
 
-    public Object getListData(){
+    public List<Product> getListData() {
         return productRepository.findAll();
     }
 
-    public Object getDataDetail(Long id){
-        return productRepository.findById(id).get();
+    public Product getDataDetail(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product with ID " + id + " not found"));
     }
 
-    public void deleted(Long id){
-        Optional<Product> product = productRepository.findById(id);
-        product.ifPresent(productRepository::delete);
+    public void deleted(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product with ID " + id + " not found"));
+        productRepository.delete(product);
     }
 
-    public Product update(Product product){
-        // check di database if user exist
-        // if exist then update
-        // else throw error
-        return null;
+    public Product update(Product updatedProduct) {
+        Product existingProduct = productRepository.findById(updatedProduct.getId())
+                .orElseThrow(() -> new RuntimeException("Product with ID " + updatedProduct.getId() + " not found"));
+
+        // Update fields
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setBrand(updatedProduct.getBrand());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setImageUrl(updatedProduct.getImageUrl());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setStock(updatedProduct.getStock());
+        existingProduct.setCategory(updatedProduct.getCategory());
+
+        return productRepository.save(existingProduct);
     }
 }
