@@ -4,7 +4,6 @@ import com.example.e_commer.booking.entity.Product;
 import com.example.e_commer.booking.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/product")
 public class ProductController {
@@ -13,7 +12,6 @@ public class ProductController {
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
-
 
     @PostMapping
     public Object create(@RequestBody Product product){
@@ -39,4 +37,12 @@ public class ProductController {
     public Object updateProduct(@RequestBody Product product){
         return productService.update(product);
     }
+
+    // 🔍 Tambahan endpoint untuk search
+    @GetMapping("/search")
+    public Object searchProduct(@RequestParam String keyword) {
+        return productService.searchByKeyword(keyword);
+    }
+
+    
 }

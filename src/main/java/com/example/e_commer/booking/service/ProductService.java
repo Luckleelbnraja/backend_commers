@@ -4,7 +4,6 @@ import com.example.e_commer.booking.entity.Category;
 import com.example.e_commer.booking.entity.Product;
 import com.example.e_commer.booking.repository.CategoryRepository;
 import com.example.e_commer.booking.repository.ProductRepository;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,41 +19,37 @@ public class ProductService {
         this.categoryRepository = categoryRepository;
     }
 
-    public Object create(Product product){
+    // ✅ Create Product
+    public Product create(Product product) {
         return productRepository.save(product);
     }
 
-    public Object getListData(){
+    // ✅ Get All Products
+    public List<Product> getListData() {
         return productRepository.findAll();
     }
 
-    public Object getDataDetail(Long id){
-        return productRepository.findById(id).get();
+    // ✅ Get Product Detail
+    public Product getDataDetail(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produk dengan ID " + id + " tidak ditemukan"));
     }
 
-    public void deleted(Long id){
-        Optional<Product> product = productRepository.findById(id);
-        product.ifPresent(productRepository::delete);
+    // ✅ Delete Product
+    public void deleted(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produk dengan ID " + id + " tidak ditemukan"));
+        productRepository.delete(product);
     }
 
+   // ✅ Update Product (simple version)
     public Product update(Product product) {
-        Product existingProduct = productRepository.findById(product.getId())
-            .orElseThrow(() -> new RuntimeException("Produk tidak ditemukan"));
-    
-        existingProduct.setName(product.getName());
-        existingProduct.setBrand(product.getBrand());
-        existingProduct.setDescription(product.getDescription());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setStock(product.getStock());
-        existingProduct.setImageUrl(product.getImageUrl());
-    
-        // ✅ Tambahan pengecekan supaya aman
-        if (product.getCategory() != null && product.getCategory().getId() != null) {
-            Category category = categoryRepository.findById(product.getCategory().getId())
-                .orElseThrow(() -> new RuntimeException("Kategori tidak ditemukan"));
-            existingProduct.setCategory(category);
-        }
-    
-        return productRepository.save(existingProduct);
+        return productRepository.save(product);
+    }
+
+
+    // ✅ Search Products
+    public List<Product> searchByKeyword(String keyword) {
+        return productRepository.searchByKeyword(keyword);
     }
 }

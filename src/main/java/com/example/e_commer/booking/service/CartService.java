@@ -2,8 +2,6 @@ package com.example.e_commer.booking.service;
 
 import com.example.e_commer.booking.entity.Cart;
 import com.example.e_commer.booking.repository.CartRepository;
-import com.example.e_commer.booking.repository.UserRepository;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,28 +15,34 @@ public class CartService {
         this.cartRepository = cartRepository;
     }
 
-    public Object create(Cart cart){
-        return cartRepository.save(cart);
+    // Fungsi untuk menambahkan item ke keranjang
+    public Cart create(Cart cart){
+        return cartRepository.save(cart); // Menyimpan cart yang baru
     }
 
-    public Object getListData(){
+    // Fungsi untuk mendapatkan semua item di cart
+    public List<Cart> getListData(){
         return cartRepository.findAll();
     }
 
-    public Object getDataDetail(Long id){
-        return cartRepository.findById(id).get();
+    // Fungsi untuk mendapatkan detail cart berdasarkan ID
+    public Cart getDataDetail(Long id){
+        return cartRepository.findById(id).orElseThrow(() -> new RuntimeException("Cart item not found with id " + id));
     }
 
+    // Fungsi untuk menghapus item di cart berdasarkan ID
     public void deleted(Long id){
         Optional<Cart> cart = cartRepository.findById(id);
         cart.ifPresent(cartRepository::delete);
     }
 
+    // Fungsi untuk memperbarui cart (opsional)
     public Cart update(Cart cart){
-        // check di database if cart exist
-        // if exist then update
-        // else throw error
-        return null;
+        // Cek apakah cart dengan ID tertentu ada, jika ada perbarui, jika tidak ada lempar exception
+        if (cartRepository.existsById(cart.getId())) {
+            return cartRepository.save(cart);
+        } else {
+            throw new RuntimeException("Cart item not found with id " + cart.getId());
+        }
     }
 }
-
