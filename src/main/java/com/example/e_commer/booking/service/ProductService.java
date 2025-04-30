@@ -38,24 +38,14 @@ public class ProductService {
         productRepository.delete(product);
     }
 
+   // ✅ Update Product (simple version)
     public Product update(Product product) {
-        Product existingProduct = productRepository.findById(product.getId())
-            .orElseThrow(() -> new RuntimeException("Produk tidak ditemukan"));
-    
-        existingProduct.setName(product.getName());
-        existingProduct.setBrand(product.getBrand());
-        existingProduct.setDescription(product.getDescription());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setStock(product.getStock());
-        existingProduct.setImageUrl(product.getImageUrl());
-    
-        // ✅ Tambahan pengecekan supaya aman
-        if (product.getCategory() != null && product.getCategory().getId() != null) {
-            Category category = categoryRepository.findById(product.getCategory().getId())
-                .orElseThrow(() -> new RuntimeException("Kategori tidak ditemukan"));
-            existingProduct.setCategory(category);
-        }
-    
-        return productRepository.save(existingProduct);
+        return productRepository.save(product);
+    }
+
+
+    // ✅ Search Products
+    public List<Product> searchByKeyword(String keyword) {
+        return productRepository.searchByKeyword(keyword);
     }
 }
